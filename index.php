@@ -18,19 +18,51 @@ if($incoming->getToken() != $SlackToken){
 	die("Bad token");
 }
 
-// instantiate a new Twilio Rest Client
-$client = new Services_Twilio($TwilioAccountSid, $TwilioAuthToken);
-
-try {
-    $message = $client->account->messages->create(array(
-        "From" 	=> $TWILIONUMBER,
-        "To" 	=> $incoming->getTarget(),
-        "Body" 	=> $incoming->getMessage(),
-    ));
-} catch (Services_Twilio_RestException $e) {
-    die($e->getMessage());
+// Determine Action (poor man's routing)
+switch($incoming->getAction()){
+    case "-add":
+        // If valid...
+        // DB Connection
+        // Exists?
+        // If not, add, flag as pending
+        // Else, die
+        break;
+    case "-remove":
+        // If valid...
+        // DB Connection
+        // Exists?
+        // If yes, remove
+        // Else, die
+        break;
+    case "-update":
+        // If valid...
+        // DB Connection
+        // Exists?
+        // If yes, update, flag as pending
+        // Else, die
+        break;
+    default:
+        sendMessage($incoming->getMessage(), $incoming->getTarget(), $TwilioAccountSid, $TwilioAuthToken, $TWILIONUMBER);
 }
 
-echo $incoming->getSuccessMessage();
+
+// Send reply
+function sendMessage($message, $target, $TwilioAccountSid, $TwilioAuthToken, $TWILIONUMBER)
+{
+    // instantiate a new Twilio Rest Client
+    $client = new Services_Twilio($TwilioAccountSid, $TwilioAuthToken);
+
+    try {
+        $message = $client->account->messages->create(array(
+            "From" 	=> $TWILIONUMBER,
+            "To" 	=> $target,
+            "Body" 	=> $message
+        ));
+    } catch (Services_Twilio_RestException $e) {
+        die($e->getMessage());
+    }
+
+    echo $incoming->getSuccessMessage();
+}
 
 ?>

@@ -38,6 +38,10 @@ class SlackPOST {
 		}
 	}
 
+	function getAction(){
+		return $this->action;
+	}
+
 	function getToken(){
 		return $this->token;
 	}
